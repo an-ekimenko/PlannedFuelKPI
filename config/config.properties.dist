@@ -1,0 +1,10 @@
+# Global configuration template for PlannedFuelKPI service.
+# Copy this file to 'config.properties' and replace placeholders with actual deployment environment paths.
+
+# The network path for exchange with BW
+excel_file=YOUR_PATH
+
+# Retry Policy settings for file locks
+# The initial timeout for retry attempts in milliseconds 
+initial_timeout_ms=10000
+max_write_attempts=3

@@ -1,0 +1,53 @@
+2026-10-30 15:51:27.334 [main] INFO  fuel.retail.Main - Bootstrapping PlannedFuelKPI service initialization workflow...
+2026-10-30 15:51:27.349 [main] INFO  fuel.retail.Main - Target master spreadsheet registered: \\aup-fs/Ivc/a.ekimenko/Плановое задание УНПО и УОСиРП.xls
+2026-10-30 15:51:27.392 [main] ERROR fuel.retail.Main - Fatal exception intercepted during application business logic execution
+java.io.FileNotFoundException: \\aup-fs\Ivc\a.ekimenko\Плановое задание УНПО и УОСиРП.xls (Процесс не может получить доступ к файлу, так как этот файл занят другим процессом)
+	at java.base/java.io.RandomAccessFile.open0(Native Method) ~[?:?]
+	at java.base/java.io.RandomAccessFile.open(RandomAccessFile.java:344) ~[?:?]
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:259) ~[?:?]
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:213) ~[?:?]
+	at org.apache.poi.poifs.nio.FileBackedDataSource.newSrcFile(FileBackedDataSource.java:189) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.poifs.nio.FileBackedDataSource.<init>(FileBackedDataSource.java:61) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.poifs.filesystem.POIFSFileSystem.<init>(POIFSFileSystem.java:258) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.poifs.filesystem.POIFSFileSystem.<init>(POIFSFileSystem.java:183) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.hssf.usermodel.HSSFWorkbookFactory.create(HSSFWorkbookFactory.java:107) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.ss.usermodel.WorkbookFactory.lambda$create$5(WorkbookFactory.java:318) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.ss.usermodel.WorkbookFactory.wp(WorkbookFactory.java:329) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.ss.usermodel.WorkbookFactory.create(WorkbookFactory.java:318) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.ss.usermodel.WorkbookFactory.create(WorkbookFactory.java:277) ~[poi-5.2.5.jar:5.2.5]
+	at org.apache.poi.ss.usermodel.WorkbookFactory.create(WorkbookFactory.java:255) ~[poi-5.2.5.jar:5.2.5]
+	at fuel.retail.parser.ExcelParser.parse(ExcelParser.java:46) ~[classes/:?]
+	at fuel.retail.Main.main(Main.java:69) [classes/:?]
+2026-10-30 15:51:27.409 [main] INFO  fuel.retail.Main - Service execution pipeline closed with return termination code: 1
+2026-10-30 15:54:40.493 [main] INFO  fuel.retail.Main - Bootstrapping PlannedFuelKPI service initialization workflow...
+2026-10-30 15:54:40.508 [main] INFO  fuel.retail.Main - Target master spreadsheet registered: \\aup-fs/Ivc/a.ekimenko/Плановое задание УНПО и УОСиРП.xls
+2026-10-30 15:54:40.999 [main] INFO  fuel.retail.writer.ResultFileWriter - Initiating data export sequence. Target path: \\aup-fs\Ivc\a.ekimenko\KPI_v3.txt
+2026-10-30 15:54:41.016 [main] INFO  fuel.retail.writer.ResultFileWriter - Export sequence finalized successfully. Records processed: 9
+2026-10-30 15:54:41.018 [main] INFO  fuel.retail.Main - Data workflow pipeline finalized with success. Destination target directory: \\aup-fs/Ivc/a.ekimenko
+2026-10-30 15:54:41.019 [main] INFO  fuel.retail.Main - Service execution pipeline closed with return termination code: 0
+2026-10-30 16:03:12.197 [main] INFO  fuel.retail.Main - Bootstrapping PlannedFuelKPI service workflow. Base active directory: D:\IT\Java\prj\excel\PlannedFuelKPI
+2026-10-30 16:03:12.201 [main] INFO  fuel.retail.Main - Target master spreadsheet registered: \\aup-fs/Ivc/a.ekimenko/Плановое задание УНПО и УОСиРП.xls
+2026-10-30 16:03:12.683 [main] INFO  fuel.retail.writer.ResultFileWriter - Initiating data export sequence. Target path: \\aup-fs\Ivc\a.ekimenko\KPI_v3.txt
+2026-10-30 16:03:12.699 [main] INFO  fuel.retail.writer.ResultFileWriter - Export sequence finalized successfully. Records processed: 9
+2026-10-30 16:03:12.701 [main] INFO  fuel.retail.Main - Data workflow pipeline finalized with success. Target directory: \\aup-fs/Ivc/a.ekimenko
+2026-10-30 16:03:12.702 [main] INFO  fuel.retail.Main - Service execution pipeline closed with return code: 0
+2026-10-30 16:17:37.982 [main] INFO  fuel.retail.Main - Bootstrapping PlannedFuelKPI service workflow. Base active directory: D:\IT\Java\prj\excel\PlannedFuelKPI
+2026-10-30 16:17:37.987 [main] INFO  fuel.retail.Main - Target master spreadsheet registered: \\aup-fs/Ivc/a.ekimenko/�������� ������� ���� � ������.xls
+2026-10-30 16:17:38.519 [main] INFO  fuel.retail.writer.ResultFileWriter - Initiating data export sequence. Target path: \\aup-fs\Ivc\a.ekimenko\KPI_v3.txt
+2026-10-30 16:17:38.544 [main] INFO  fuel.retail.writer.ResultFileWriter - Export sequence finalized successfully. Records processed: 9
+2026-10-30 16:17:38.547 [main] INFO  fuel.retail.Main - Data workflow pipeline finalized with success. Target directory: \\aup-fs/Ivc/a.ekimenko
+2026-10-30 16:17:38.549 [main] INFO  fuel.retail.Main - Service execution pipeline closed with return code: 0
+2026-10-30 16:41:14.322 [main] INFO  fuel.retail.Main - Bootstrapping PlannedFuelKPI service workflow. Base active directory: D:\IT\Java\prj\excel\PlannedFuelKPI
+2026-10-30 16:41:14.327 [main] INFO  fuel.retail.Main - Target master spreadsheet registered: \\aup-fs/Ivc/a.ekimenko/Плановое задание УНПО и УОСиРП.xls
+2026-10-30 16:41:14.820 [main] INFO  fuel.retail.Main - Attempting file output export sequence (Attempt 1/3)...
+2026-10-30 16:41:14.823 [main] INFO  fuel.retail.writer.ResultFileWriter - Initiating data export sequence. Target path: \\aup-fs\Ivc\a.ekimenko\KPI_v3.txt
+2026-10-30 16:41:14.840 [main] INFO  fuel.retail.writer.ResultFileWriter - Export sequence finalized successfully. Records processed: 9
+2026-10-30 16:41:14.842 [main] INFO  fuel.retail.Main - Data workflow pipeline finalized with success. Target directory: \\aup-fs/Ivc/a.ekimenko
+2026-10-30 16:41:14.843 [main] INFO  fuel.retail.Main - Service execution pipeline closed with return code: 0
+2026-11-02 09:21:18.312 [main] INFO  fuel.retail.Main - Bootstrapping PlannedFuelKPI service workflow. Base active directory: D:\IT\Java\prj\excel\PlannedFuelKPI
+2026-11-02 09:21:18.319 [main] INFO  fuel.retail.Main - Target master spreadsheet registered: \\it.beloil.by/docs/common/ExchageBW/Плановое задание УНПО и УОСиРП.xls
+2026-11-02 09:21:18.793 [main] INFO  fuel.retail.Main - Attempting file output export sequence (Attempt 1/3)...
+2026-11-02 09:21:18.798 [main] INFO  fuel.retail.writer.ResultFileWriter - Initiating data export sequence. Target path: \\it.beloil.by\docs\common\ExchageBW\KPI_v3.txt
+2026-11-02 09:21:18.835 [main] INFO  fuel.retail.writer.ResultFileWriter - Export sequence finalized successfully. Records processed: 9
+2026-11-02 09:21:18.838 [main] INFO  fuel.retail.Main - Data workflow pipeline finalized with success. Target directory: \\it.beloil.by/docs/common/ExchageBW
+2026-11-02 09:21:18.839 [main] INFO  fuel.retail.Main - Service execution pipeline closed with return code: 0
