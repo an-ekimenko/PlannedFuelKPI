@@ -15,6 +15,7 @@
         <poi.version>5.2.5</poi.version>
         <log4j.version>2.23.1</log4j.version>
         <lib.dir>dependencies</lib.dir>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <dependencies>
@@ -58,14 +59,17 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-        
-        
+
+        <!-- ==================================================================== -->
+        <!-- DEVELOPMENT TOOLS (CODE GENERATION)                                  -->
+        <!-- ==================================================================== -->
+        <!-- Lombok library for eliminating boilerplate code (getters, setters, etc.) -->
         <dependency>
-    		<groupId>org.projectlombok</groupId>
-    		<artifactId>lombok</artifactId>
-    		<version>1.18.30</version> <!-- Или используйте актуальную версию для вашего окружения -->
-    		<scope>provided</scope>
-		</dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -73,10 +77,10 @@
         
         <plugins>
             <!-- ==================================================================== -->
-            <!-- BUILD AND PACKAGING PLUGINS                                         -->
+            <!-- BUILD AND PACKAGING PLUGINS                                          -->
             <!-- ==================================================================== -->
             
-            <!-- 1. Copies external dependencies ONE LEVEL ABOVE project root -->
+            <!-- Copies external dependencies ONE LEVEL ABOVE project root -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -95,7 +99,7 @@
                 </executions>
             </plugin>
 
-            <!-- 2. Configures the main application JAR and binds the relative classpath -->
+            <!-- Configures the main application JAR and binds the relative classpath -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -112,7 +116,7 @@
                 </configuration>
             </plugin>
 
-            <!-- 3. Automatically moves the compiled JAR asset out of target/ into the project root -->
+            <!-- Automatically moves the compiled JAR asset out of target/ into the project root -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -141,3 +145,4 @@
         </plugins>
     </build>
 </project>
+
