@@ -1,1 +1,2 @@
 # Target build directorytarget/# Log files and directorieslogs/*.log# Eclipse / Spring Tool Suite (STS) project files.project.classpath.settings/.factorypath*.jar*.xls*.txt# Allow Git to access the config folder itself, but ignore all of its contents by default.!/config//config/*# Add an exception for templates that MUST be in the repository.!/config/*.dist
+/target
