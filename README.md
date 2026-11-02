@@ -77,26 +77,52 @@ In enterprise environments, writing output target buffers to distributed file sy
 
 ## Deployment Topology & Artifact Isolation
 
-The Maven layout segregates third-party software artifacts away from application runtimes, isolating core frameworks inside a shared parent directory structure. This setup allows multiple specialized parsing utilities to share a single centralized library pool on the deployment host:
+The Maven layout segregates third-party software artifacts away from application runtimes, isolating core frameworks inside a shared parent directory structure. This setup allows multiple specialized parsing utilities to share a single centralized library pool on the deployment host. The internal subpackages (`config`, `model`, `parser`, `writer`) and automated unit test matrices are cleanly encapsulated inside the parent root package `fuel.retail`:
 
 ```text
-D:/IT/Java/prj/excel/               # Enterprise Extraction Shared Root Folder
-├── dependencies/                  # CENTRALIZED SHAREABLE LIBRARY BUNDLE (POI, Log4j2, Lombok, etc.)
+D:/IT/Java/prj/excel/            # Enterprise Extraction Shared Root Folder
+├── dependencies/               # CENTRALIZED SHAREABLE LIBRARY BUNDLE (POI, Log4j2, Lombok, etc.)
 │   ├── poi-5.2.5.jar
 │   ├── log4j-core-2.23.1.jar
 │   └── [Other required third-party libraries...]
-│
-└── PlannedFuelKPI/                # Application Execution Profile Home
+└── PlannedFuelKPI/             # Application Execution Profile Home
     ├── config/
-    │   ├── config.properties      # Environmental execution parameters
+    │   ├── config.properties   # Environmental execution parameters
     │   ├── config.properties.dist # Git-tracked profile blueprint configuration
-    │   └── log4j2.xml             # Dual-channel (Console & File Appender) descriptor
+    │   └── log4j2.xml          # Dual-channel (Console & File Appender) descriptor
     ├── exchange/
-    │   └── result.yaml            # Process termination receipt descriptor
+    │   └── result.yaml         # Process termination receipt descriptor
     ├── logs/
-    │   └── application.log        # Active operation logging destination
-    └── PlannedFuelKPI.jar         # Standalone compiled executable binary module
+    │   └── application.log     # Active operation logging destination
+    ├── src/
+    │   ├── main/
+    │   │   └── java/
+    │   │       └── fuel/
+    │   │           └── retail/
+    │   │               ├── config/
+    │   │               │   └── AppConfig.java
+    │   │               ├── model/
+    │   │               │   └── KPI.java
+    │   │               │   └── PON.java
+    │   │               ├── parser/
+    │   │               │   └── ExcelParser.java
+    │   │               ├── writer/
+    │   │               │   └── ResultFileWriter.java
+    │   │               └── Main.java
+    │   └── test/
+    │       └── java/
+    │           └── fuel/
+    │               └── retail/
+    │                   ├── model/
+    │                   │   └── DomainModelTest.java
+    │                   ├── parser/
+    │                   │   └── ExcelParserTest.java
+    │                   ├── writer/
+    │                   │   └── ResultFileWriterTest.java
+    │                   └── MainTest.java
+    └── PlannedFuelKPI.jar          # Standalone compiled executable binary module
 ```
+
 ---
 
 ## Configuration Reference
