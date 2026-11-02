@@ -129,6 +129,26 @@ output:
     *   `0`: Process closed without exceptions; `KPI_v3.txt` is fully verified and ready for SAP BW ingestion.
     *   `1`: Critical infrastructure or I/O bottleneck encountered (e.g., permanent file lock); delivery aborted.
 
+
+## Testing Framework & Test Scenarios
+
+The utility includes an isolated automated test suite powered by **JUnit 5** and **Mockito** frameworks to guarantee transactional reliability, prevent regression bugs, and safeguard business precision controls. To achieve high-speed execution independent of network states, external directories, or active user locks, the core logic layers are verified in strict isolation using behavioral test doubles and reflection patterns.
+
+### Covered Test Scenarios
+
+#### 1. Integration Orchestration & Fault-Tolerance (`MainTest`)
+*   **Isolated Retry Policy Backoff Validation**: Stubs `ResultFileWriter` to continuously emit persistent `IOException` locks. Verifies that the orchestration engine executes exactly up to `max_write_attempts` (3 tries) and mathematically evaluates the Progressive Exponential Backoff sleep window durations before throwing a terminal exception.
+*   **Verification Receipt Token Materialization**: Tracks the analytics layer check status inside a safe execution sandbox environment. Asserts that the output `result.yaml` token is generated with a valid metadata layout, dynamic completion timestamps, and the matching success integer code block context (`returned_code: 0`).
+
+#### 2. Stateful Layout Extraction Validation (`ExcelParserTest`)
+*   **Merged Blocks Context Maintenance (Stateful Tracking)**: Mimics an incoming row-by-row structural POI sheet block where vertical cells map to `BLANK` properties outside the top-left origin. Asserts that the internal parsing loop preserves the active parent context and dynamically links subsequent enterprise data lines (`PON`) to the target `KPI`.
+*   **String Parsing Types Resiliency**: Simulates complex string and decimal inputs associated with corporate worksheets. Asserts that missing values fail gracefully to safe default `"0"` markers instead of crashing with a `NullPointerException`.
+
+#### 3. Data Precision & Scale Controls (`ResultFileWriterTest`)
+*   **Token Text Cleansing Strategy**: Asserts that localized decimal punctuation variations (e.g., cell numbers manually input using commas `100,1234`) are successfully normalized to standardized dot notations (`100.1234`) before calculations launch.
+*   **Zero-Loss Precision Maintenance**: Validates that raw text numbers are converted into exact `BigDecimal` structures matching strict scale locks (`DECIMAL_SCALE = 3`) and the forced `RoundingMode.CEILING` rule. Ensures output data rows (e.g., `100.124`) are fully verified and predictable.
+
+
 ## Build & Lifecycle Automation
 
 ### Compilation Sequence
