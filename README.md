@@ -40,14 +40,14 @@ To bring the application to enterprise-grade compliance, the architecture was fu
 
 ## Automated Test Matrix & Verification Layers
 
-Для обеспечения транзакционной надежности, предотвращения регрессионных багов и строгого контроля точности вычислений, кодовая база полностью покрыта изолированными юнит-тестами на базе **JUnit 5** и **Mockito**. Архитектура тестов спроектирована так, чтобы изолировать внешнюю инфраструктуру (файловую систему, сетевые задержки и блокировки ОС) с помощью тестовых заглушек, моков статических методов и механизмов рефлексии.
+To ensure transactional reliability, prevent regression bugs, and strictly control calculation accuracy, the codebase is fully covered by isolated unit tests based on **JUnit 5** and **Mockito**. The test architecture is designed to isolate the external infrastructure (file system, network latencies, and OS locks) using test stubs, static method mocks, and reflection mechanisms.
 
 ### 1. Domain Model Layer Verification
 
 * **`fuel.retail.model.DomainModelTest`**
-  Фокусируется на валидации инвариантов бизнес-сущностей и защите от базовых ошибок работы с памятью.
-  * **Whitespace Trimming**: Проверяет автоматическое отсечение начальных и конечных пробелов при инициализации текстовых наименований в конструкторах `KPI` и `PON`.
-  * **Array Boundary Protection**: Гарантирует устойчивость системы к ошибкам `ArrayIndexOutOfBoundsException` при заполнении помесячных показателей `PON` (индексы `0-11`). Корректно игнорирует выходящие за границы диапазоны и сохраняет пустые ячейки в состоянии `null`.
+  Focuses on validating business entity invariants and preventing fundamental memory management issues.
+  * **Whitespace Trimming**: Verifies automatic trimming of leading and trailing whitespaces during the initialization of text fields within `KPI` and `PON` constructors.
+  * **Array Boundary Protection**: Guarantees system resilience against `ArrayIndexOutOfBoundsException` when populating monthly `PON` indicators (indices `0-11`). It correctly ignores out-of-bounds ranges and retains empty cells in a `null` state.
 
 ### 2. Extraction & Transformation Layer Verification
 
@@ -61,19 +61,19 @@ To bring the application to enterprise-grade compliance, the architecture was fu
 ### 3. Persistence & Formatting Layer Verification
 
 * **`fuel.retail.writer.ResultFileWriterTest`**
-  Контролирует корректность сериализации накопленных данных в плоский файл для шины данных SAP BW.
-  * **File Materialization**: Проверяет физическое появление выходного артефакта `KPI_v3.txt` на диске в изолированной временной директории `@TempDir`.
-  * **Token Punctuation Normalization**: Гарантирует замену локализованных разделителей (запятых в числах вида `100,1234`) на стандартные точки перед математической обработкой.
-  * **Zero-Loss Precision Control**: Проверяет строгое приведение текстовых данных к типу `BigDecimal` с фиксированным масштабом `DECIMAL_SCALE = 3` и округлением в большую сторону (`RoundingMode.CEILING`), исключая появление экспоненциальных записей (типа `1.2E+2`).
-  * **Fallback Strategy Handling**: Тестирует блоки `try-catch`, перехватывающие некорректные текстовые значения (`invalid_num`), проверяя их безопасную замену на дефолтный маркер `0.000` без падения всего потока экспорта.
+  Verifies the correctness of serializing accumulated data into a flat file for the SAP BW data bus.
+  * **File Materialization**: Validates the physical appearance of the output artifact `KPI_v3.txt` on the disk within an isolated temporary directory (`@TempDir`).
+  * **Token Punctuation Normalization**: Guarantees the replacement of localized separators (commas in numbers like `100,1234`) with standard decimal points prior to mathematical processing.
+  * **Zero-Loss Precision Control**: Verifies strict parsing of text data into `BigDecimal` with a fixed scale of `DECIMAL_SCALE = 3` and rounding up (`RoundingMode.CEILING`), preventing the generation of exponential notations (such as `1.2E+2`).
+  * **Fallback Strategy Handling**: Tests `try-catch` blocks that intercept malformed text values (`invalid_num`), verifying their safe replacement with a default `0.000` token without causing the entire export pipeline to fail.
 
 ### 4. System Orchestration & Fault-Tolerance Verification
 
 * **`fuel.retail.MainTest`**
-  Изолированно проверяет логику жизненного цикла приложения, сетевую устойчивость и генерацию системных отчетов.
-  * **Happy Path Validation**: Проверяет, что при успешной записи с первой попытки цикл оркестратора не инициирует повторные обращения к файловой системе (`times(1)`).
-  * **Exponential Backoff Math Controls**: Симулирует постоянную блокировку распределенного хранилища путем принудительного выброса `IOException` из мока `ResultFileWriter`. Через рефлексию вызывает приватный метод `executeWriteWithRetry` и проверяет строгое соблюдение лимита попыток (`max_write_attempts = 3`). Математически замеряет накопленное время сна потока (`duration >= 50ms`), подтверждая прогрессивное увеличение пауз между попытками по формуле экспоненциального затухания.
-  * **Token Receipt Materialization**: Проверяет вызов приватного метода `writeYamlResult`. Анализирует сгенерированный в корне проекта файл контроля интеграции `exchange/result.yaml`, подтверждая валидность структуры YAML, наличие динамической метки времени `datetime` и возвращаемого кода завершения (`returned_code: 0`). Включает блок `finally` для самоочистки рабочего окружения после завершения тестов.
+  Verifies the application lifecycle logic, network resilience, and system report generation in an isolated environment.
+  * **Happy Path Validation**: Verifies that upon a successful write operation on the first attempt, the orchestrator loop does not trigger redundant file system interactions (`times(1)`).
+  * **Exponential Backoff Math Controls**: Simulates a persistent distributed storage lock by forcefully throwing an `IOException` from the `ResultFileWriter` mock. Invokes the private `executeWriteWithRetry` method via reflection and verifies strict adherence to the retry limit (`max_write_attempts = 3`). Mathematically measures the accumulated thread sleep time (`duration >= 50ms`), confirming a progressive delay increase between attempts based on the exponential backoff formula.
+  * **Token Receipt Materialization**: Verifies the invocation of the private `writeYamlResult` method. Analyzes the integration control file `exchange/result.yaml` generated in the project root, confirming YAML structure validity, the presence of a dynamic `datetime` timestamp, and the exit code (`returned_code: 0`). Includes a `finally` block for automatic workspace cleanup after test execution.
 
 ---
 
