@@ -52,11 +52,11 @@ To ensure transactional reliability, prevent regression bugs, and strictly contr
 ### 2. Extraction & Transformation Layer Verification
 
 * **`fuel.retail.parser.ExcelParserTest`**
-  Тестирует отказоустойчивость парсера и логику сборки разрозненных ячеек Excel в единые доменные структуры.
-  * **Missing Asset Handling**: Верифицирует немедленный выброс `FileNotFoundException` при передаче некорректного пути к книге на диске.
-  * **Deep POI Ecosystem Mocking**: Создает симулированную иерархию объектов Apache POI (`Workbook` -> `Sheet` -> `Row` -> `Cell`), имитируя поведение вертикально объединенных ячеек (*Merged Cells*), где дочерние строки возвращают `CellType.BLANK`.
-  * **Stateful Pattern Validation**: Подтверждает работоспособность паттерна «Состояние» (*Stateful Tracking Pattern*), контролируя, что парсер не теряет контекст активного родительского `KPI` и корректно привязывает к нему последующие дочерние предприятия `PON` при построчном обходе.
-  * **Static Factory Interception**: Использует возможности `Mockito.mockStatic` для перехвата вызовов фабричного метода `WorkbookFactory.create()`, полностью изолируя процесс чтения потоков (`InputStream`) в памяти.
+  Tests parser fault-tolerance and the orchestration logic of assembling scattered Excel cells into unified domain structures.
+  * **Missing Asset Handling**: Verifies that a `FileNotFoundException` is immediately thrown when an incorrect workbook path on the disk is provided.
+  * **Deep POI Ecosystem Mocking**: Creates a simulated Apache POI object hierarchy (`Workbook` -> `Sheet` -> `Row` -> `Cell`), mimicking the behavior of vertically merged cells where child rows return `CellType.BLANK`.
+  * **Stateful Pattern Validation**: Confirms the integrity of the Stateful Tracking Pattern, ensuring that the parser does not lose the context of the active parent `KPI` and correctly associates subsequent child `PON` entities with it during a row-by-row traversal.
+  * **Static Factory Interception**: Utilizes `Mockito.mockStatic` capabilities to intercept invocations of the `WorkbookFactory.create()` factory method, completely isolating the `InputStream` reading process within memory.
 
 ### 3. Persistence & Formatting Layer Verification
 
