@@ -38,6 +38,43 @@ To bring the application to enterprise-grade compliance, the architecture was fu
 *   **`fuel.retail.model.KPI` & `fuel.retail.model.PON` (The Domain / Data Model Layer)**  
     Pure data layouts optimized using **Project Lombok** (`@Getter`). They completely isolate data representation away from processing logic, functioning as clean, lightweight message wrappers transferred between the Parser and the Writer components.
 
+## Automated Test Matrix & Verification Layers
+
+Для обеспечения транзакционной надежности, предотвращения регрессионных багов и строгого контроля точности вычислений, кодовая база полностью покрыта изолированными юнит-тестами на базе **JUnit 5** и **Mockito**. Архитектура тестов спроектирована так, чтобы изолировать внешнюю инфраструктуру (файловую систему, сетевые задержки и блокировки ОС) с помощью тестовых заглушек, моков статических методов и механизмов рефлексии.
+
+### 1. Domain Model Layer Verification
+
+* **`fuel.retail.model.DomainModelTest`**
+  Фокусируется на валидации инвариантов бизнес-сущностей и защите от базовых ошибок работы с памятью.
+  * **Whitespace Trimming**: Проверяет автоматическое отсечение начальных и конечных пробелов при инициализации текстовых наименований в конструкторах `KPI` и `PON`.
+  * **Array Boundary Protection**: Гарантирует устойчивость системы к ошибкам `ArrayIndexOutOfBoundsException` при заполнении помесячных показателей `PON` (индексы `0-11`). Корректно игнорирует выходящие за границы диапазоны и сохраняет пустые ячейки в состоянии `null`.
+
+### 2. Extraction & Transformation Layer Verification
+
+* **`fuel.retail.parser.ExcelParserTest`**
+  Тестирует отказоустойчивость парсера и логику сборки разрозненных ячеек Excel в единые доменные структуры.
+  * **Missing Asset Handling**: Верифицирует немедленный выброс `FileNotFoundException` при передаче некорректного пути к книге на диске.
+  * **Deep POI Ecosystem Mocking**: Создает симулированную иерархию объектов Apache POI (`Workbook` -> `Sheet` -> `Row` -> `Cell`), имитируя поведение вертикально объединенных ячеек (*Merged Cells*), где дочерние строки возвращают `CellType.BLANK`.
+  * **Stateful Pattern Validation**: Подтверждает работоспособность паттерна «Состояние» (*Stateful Tracking Pattern*), контролируя, что парсер не теряет контекст активного родительского `KPI` и корректно привязывает к нему последующие дочерние предприятия `PON` при построчном обходе.
+  * **Static Factory Interception**: Использует возможности `Mockito.mockStatic` для перехвата вызовов фабричного метода `WorkbookFactory.create()`, полностью изолируя процесс чтения потоков (`InputStream`) в памяти.
+
+### 3. Persistence & Formatting Layer Verification
+
+* **`fuel.retail.writer.ResultFileWriterTest`**
+  Контролирует корректность сериализации накопленных данных в плоский файл для шины данных SAP BW.
+  * **File Materialization**: Проверяет физическое появление выходного артефакта `KPI_v3.txt` на диске в изолированной временной директории `@TempDir`.
+  * **Token Punctuation Normalization**: Гарантирует замену локализованных разделителей (запятых в числах вида `100,1234`) на стандартные точки перед математической обработкой.
+  * **Zero-Loss Precision Control**: Проверяет строгое приведение текстовых данных к типу `BigDecimal` с фиксированным масштабом `DECIMAL_SCALE = 3` и округлением в большую сторону (`RoundingMode.CEILING`), исключая появление экспоненциальных записей (типа `1.2E+2`).
+  * **Fallback Strategy Handling**: Тестирует блоки `try-catch`, перехватывающие некорректные текстовые значения (`invalid_num`), проверяя их безопасную замену на дефолтный маркер `0.000` без падения всего потока экспорта.
+
+### 4. System Orchestration & Fault-Tolerance Verification
+
+* **`fuel.retail.MainTest`**
+  Изолированно проверяет логику жизненного цикла приложения, сетевую устойчивость и генерацию системных отчетов.
+  * **Happy Path Validation**: Проверяет, что при успешной записи с первой попытки цикл оркестратора не инициирует повторные обращения к файловой системе (`times(1)`).
+  * **Exponential Backoff Math Controls**: Симулирует постоянную блокировку распределенного хранилища путем принудительного выброса `IOException` из мока `ResultFileWriter`. Через рефлексию вызывает приватный метод `executeWriteWithRetry` и проверяет строгое соблюдение лимита попыток (`max_write_attempts = 3`). Математически замеряет накопленное время сна потока (`duration >= 50ms`), подтверждая прогрессивное увеличение пауз между попытками по формуле экспоненциального затухания.
+  * **Token Receipt Materialization**: Проверяет вызов приватного метода `writeYamlResult`. Анализирует сгенерированный в корне проекта файл контроля интеграции `exchange/result.yaml`, подтверждая валидность структуры YAML, наличие динамической метки времени `datetime` и возвращаемого кода завершения (`returned_code: 0`). Включает блок `finally` для самоочистки рабочего окружения после завершения тестов.
+
 ---
 
 ## Technical Features & Production Resilience
