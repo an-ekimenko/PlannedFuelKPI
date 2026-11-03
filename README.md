@@ -192,5 +192,5 @@ mvn clean package
 Launch the autonomous engine using standard virtual machine initialization commands, providing the absolute or relative path to the application directory:
 
 ```bash
-java -jar <Path to the root of the project>/PlannedFuelKPI.jar
+java -jar /path/to/PlannedFuelKPI.jar
 ```
