@@ -9,6 +9,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +50,9 @@ public class ResultFileWriter {
         log.info("Initiating data export sequence. Target path: {}", txtFile.getAbsolutePath());
 
         // Using standard BufferedWriter bound explicitly to UTF-8 encoding configuration
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txtFile), StandardCharsets.UTF_8))) {
+        /*try (Writer writer = new BufferedWriter(
+         * new OutputStreamWriter(new FileOutputStream(txtFile), StandardCharsets.UTF_8))) {*/
+       	try (Writer writer = Files.newBufferedWriter(txtFile.toPath(), StandardCharsets.UTF_8)) { 
             int kpiNumInOrder = 1;
             
             for (KPI kpi : kpiList) {
