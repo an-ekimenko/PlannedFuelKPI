@@ -33,6 +33,7 @@ To bring the application to enterprise-grade compliance, the architecture was fu
     Acts purely as the entry point and runtime environment manager. It handles infrastructure bootstrapping, maps filesystem paths dynamically (detecting IDE vs. production JAR modes), reads external configurations, and wraps downstream processes into an automated **Fault-Tolerant Retry Pipeline**. It is completely decoupled from Apache POI libraries and file-writing streams.
 *   **`fuel.retail.parser.ExcelParser` (The Extraction & Transformation Layer)**  
     Responsible solely for sheet structure traversal, cell type resolution, and string-to-token parsing. It contains no file destination knowledge, no rounding parameters, and no business delivery logic. It consumes raw binary input streams and transforms them directly into decoupled domain objects.
+    * `Loose Coupling` via Unified Initialization: Using WorkbookFactory.create() ensures loose coupling with file formats, keeping initialization unchanged even with future Apache POI updates.
 *   **`fuel.retail.writer.ResultFileWriter` (The Persistence & Formatting Layer)**  
     Responsible exclusively for the output delivery lifecycle. It handles exact data formatting (semicolon layouts), pads metadata keys, and enforces rigid enterprise numeric transformation. It has zero knowledge of spreadsheet structures or configuration profiles.
 *   **`fuel.retail.model.KPI` & `fuel.retail.model.PON` (The Domain / Data Model Layer)**  
@@ -110,6 +111,10 @@ In enterprise environments, writing output target buffers to distributed file sy
     *   *Failure 1 (Attempt 1):* $10000 \times (1 + 1^0) = 10,000\text{ ms}$ delay before retry.
     *   *Failure 2 (Attempt 2):* $10000 \times (1 + 2^1) = 30,000\text{ ms}$ delay before retry.
 
+### 5. Automated Format Detection & Extension Mismatch Resilience (WorkbookFactory)
+Business operators frequently make manual errors, such as renaming file extensions (e.g., swapping .xlsx to .xls or vice versa) before publishing them to shared network directories. By leveraging the WorkbookFactory engine rather than strictly hardcoding specific subclass constructors (such as XSSFWorkbook or HSSFWorkbook), the system enforces:
+* **Dynamic Binary Signature Analysis:** The internal file format is resolved automatically by evaluating its underlying binary headers (magic numbers), ignoring the arbitrary text extension specified in the filename.
+* **Human-Error Safeguards:** The parsing utility successfully ingests and processes improperly renamed workbooks, preventing catastrophic integration pipeline failures caused by unexpected format-to-structure mismatches.
 ---
 
 ## Deployment Topology & Artifact Isolation
