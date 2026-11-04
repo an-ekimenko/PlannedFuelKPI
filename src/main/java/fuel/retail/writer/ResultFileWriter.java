@@ -50,8 +50,6 @@ public class ResultFileWriter {
         log.info("Initiating data export sequence. Target path: {}", txtFile.getAbsolutePath());
 
         // Using standard BufferedWriter bound explicitly to UTF-8 encoding configuration
-        /*try (Writer writer = new BufferedWriter(
-         * new OutputStreamWriter(new FileOutputStream(txtFile), StandardCharsets.UTF_8))) {*/
        	try (Writer writer = Files.newBufferedWriter(txtFile.toPath(), StandardCharsets.UTF_8)) { 
             int kpiNumInOrder = 1;
             
