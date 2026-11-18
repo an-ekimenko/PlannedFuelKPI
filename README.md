@@ -103,13 +103,16 @@ Corporate spreadsheets hosted on corporate shared network storage instances (`\\
 *   **In-Memory Lifecycle Isolation:** Once the `InputStream` is passed, Apache POI copies the localized data matrix straight into memory heap contexts near-instantaneously (optimizing `.xls` documents up to 50-100 MB). The utility instantly shuts down the underlying operating system file descriptor, dropping the network target retention footprint to near-zero.
 
 ### 4. Exponential Backoff Retry Policy for Network Publication
-In enterprise environments, writing output target buffers to distributed file system nodes can collide with active scheduling processes (e.g., a SAP BW extractor pulling data from `KPI_v3.txt` concurrently). To mitigate transient infrastructure collisions, the orchestration engine encapsulates the write subsystem inside an automated loop using an **Exponential Backoff Back-Off Policy**:
-*   Transient `IOException` locks trigger a warning state rather than a crash sequence.
-*   The execution thread enters a controlled sleep window before recycling attempts, scaling the pause delay progressively using the configured deployment profile parameters:
-    \[\text{timeout} = \text{initialTimeoutMs} \times (1 + \text{attempt}^{(\text{attempt} - 1)})\]
-*   *Example delays using `initial_timeout_ms=10000` (10 seconds):*
-    *   *Failure 1 (Attempt 1):* $10000 \times (1 + 1^0) = 10,000\text{ ms}$ delay before retry.
-    *   *Failure 2 (Attempt 2):* $10000 \times (1 + 2^1) = 30,000\text{ ms}$ delay before retry.
+In enterprise environments, writing output target buffers to distributed file system nodes can collide with active scheduling processes (e.g., a SAP BW extractor pulling data from `KPI_v3.txt` concurrently). To mitigate transient infrastructure collisions, the orchestration engine encapsulates the write subsystem inside an automated loop using an **Exponential Backoff Policy**:
+
+* Transient `IOException` locks trigger a warning state rather than a crash sequence.
+* The execution thread enters a controlled sleep window before recycling attempts, scaling the pause delay progressively using the configured deployment profile parameters:
+
+$$\text{timeout} = \text{initialTimeoutMs} \times \left(1 + \text{attempt}^{(\text{attempt} - 1)}\right)$$
+
+* *Example delays using `initial_timeout_ms = 10000` (10 seconds):*
+  * *Failure 1 (Attempt 1):* $10000 \times (1 + 1^0) = 20,000\text{ ms}$ delay before retry.
+  * *Failure 2 (Attempt 2):* $10000 \times (1 + 2^1) = 30,000\text{ ms}$ delay before retry.
 
 ### 5. Automated Format Detection & Extension Mismatch Resilience (WorkbookFactory)
 Business operators frequently make manual errors, such as renaming file extensions (e.g., swapping .xlsx to .xls or vice versa) before publishing them to shared network directories. By leveraging the WorkbookFactory engine rather than strictly hardcoding specific subclass constructors (such as XSSFWorkbook or HSSFWorkbook), the system enforces:
